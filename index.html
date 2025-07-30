@@ -128,14 +128,17 @@
         const data = await res.json();
 
         if (data.matches && data.matches.length > 0) {
-          const answer = data.matches.map((match, index) =>
-            `${index + 1}. [${match.method}] ${match.path}\n   → ${match.summary}`
-          ).join('\n\n');
+  const answer = data.matches.map((match, index) =>
+    `${index + 1}. [${match.method}] ${match.path}\n   → ${match.summary}`
+  ).join('\n\n');
 
-          addMessage(answer, 'bot');
-        } else {
-          addMessage(data.message || data.error || 'No matches found.', 'bot');
-        }
+  addMessage(answer, 'bot');
+} else if (data.answer) {
+  addMessage(data.answer, 'bot');
+} else {
+  addMessage(data.message || data.error || 'No matches found.', 'bot');
+}
+
 
       } catch (err) {
         addMessage('Error: ' + err.message, 'bot');
