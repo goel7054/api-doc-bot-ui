@@ -20,7 +20,7 @@
   <script>
     async function ask() {
       const question = document.getElementById("question").value;
-      const res = await fetch("https://api-docs-webhook-bot.onrender.com/api-doc-bot", {
+      const res = await fetch("https://swagger-bot.onrender.com/api-doc-bot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question }),
