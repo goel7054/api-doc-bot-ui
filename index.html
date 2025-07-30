@@ -1,19 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Swagger Bot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background-color: #f5f5f5;
+    }
+    h2 {
+      color: #333;
+    }
+    #questionInput {
+      width: 60%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    #response {
+      margin-top: 20px;
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      white-space: pre-wrap;
+    }
+  </style>
 </head>
 <body>
   <h2>Ask about the API</h2>
   <input type="text" id="questionInput" placeholder="Enter your question" />
   <button onclick="askQuestion()">Ask</button>
 
-  <p id="response"></p>
+  <div id="response"></div>
 
   <script>
     async function askQuestion() {
-      const question = document.getElementById('questionInput').value;
+      const question = document.getElementById('questionInput').value.trim();
       const responseEl = document.getElementById('response');
+
+      if (!question) {
+        responseEl.innerText = "Please enter a question.";
+        return;
+      }
+
+      responseEl.innerText = "Thinking... 🤔";
 
       try {
         const res = await fetch('https://swagger-bot.onrender.com/api-doc-bot', {
