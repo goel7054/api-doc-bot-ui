@@ -1,32 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>API Documentation Bot</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    textarea { width: 100%; height: 100px; }
-    button { margin-top: 10px; padding: 10px 20px; }
-    #result { margin-top: 20px; white-space: pre-wrap; }
-  </style>
+  <title>Swagger Bot</title>
 </head>
 <body>
-  <h2>Ask Something about the API</h2>
-  <textarea id="question" placeholder="e.g., What does /login endpoint do?"></textarea><br>
-  <button onclick="ask()">Ask</button>
-  <div id="result"></div>
+  <h2>Ask about the API</h2>
+  <input type="text" id="questionInput" placeholder="Enter your question" />
+  <button onclick="askQuestion()">Ask</button>
+
+  <p id="response"></p>
 
   <script>
-    async function ask() {
-      const question = document.getElementById("question").value;
-      const res = await fetch("https://swagger-bot.onrender.com/api-doc-bot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question }),
-      });
-      const data = await res.json();
-      document.getElementById("result").innerText = data.answer || "No response.";
+    async function askQuestion() {
+      const question = document.getElementById('questionInput').value;
+      const responseEl = document.getElementById('response');
+
+      try {
+        const res = await fetch('https://swagger-bot.onrender.com/api-doc-bot', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ question })
+        });
+
+        const data = await res.json();
+        responseEl.innerText = data.answer || data.error || 'No response received';
+      } catch (err) {
+        responseEl.innerText = 'Error: ' + err.message;
+      }
     }
   </script>
 </body>
