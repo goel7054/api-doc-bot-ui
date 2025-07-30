@@ -1,73 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Swagger Bot</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>API Doc Chatbot</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 30px;
-      background-color: #f5f5f5;
+      background: #f1f1f1;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
     }
-    h2 {
-      color: #333;
-    }
-    #questionInput {
-      width: 60%;
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      max-width: 600px;
+      margin: auto;
       padding: 10px;
-      margin-top: 10px;
-      font-size: 16px;
+      overflow-y: auto;
     }
-    button {
+
+    .message {
       padding: 10px 15px;
+      border-radius: 20px;
+      margin: 5px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: #007bff;
+      color: white;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background-color: #e5e5ea;
+      color: black;
+    }
+
+    .input-container {
+      display: flex;
+      padding: 10px;
+      background: #fff;
+      border-top: 1px solid #ccc;
+    }
+
+    .input-container input {
+      flex: 1;
+      padding: 10px;
       font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      outline: none;
+    }
+
+    .input-container button {
       margin-left: 10px;
+      padding: 10px 15px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 20px;
       cursor: pointer;
     }
-    #response {
-      margin-top: 20px;
-      background-color: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      white-space: pre-wrap;
+
+    .input-container button:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
 <body>
-  <h2>Ask about the API</h2>
-  <input type="text" id="questionInput" placeholder="Enter your question" />
-  <button onclick="askQuestion()">Ask</button>
+  <div class="chat-container" id="chatBox"></div>
 
-  <div id="response"></div>
+  <div class="input-container">
+    <input type="text" id="questionInput" placeholder="Ask something about the API..." />
+    <button onclick="askQuestion()">Send</button>
+  </div>
 
   <script>
     async function askQuestion() {
-      const question = document.getElementById('questionInput').value.trim();
-      const responseEl = document.getElementById('response');
+      const inputEl = document.getElementById('questionInput');
+      const chatBox = document.getElementById('chatBox');
+      const question = inputEl.value.trim();
+      if (!question) return;
 
-      if (!question) {
-        responseEl.innerText = "Please enter a question.";
-        return;
-      }
-
-      responseEl.innerText = "Thinking... 🤔";
+      // Show user's message
+      addMessage(question, 'user');
+      inputEl.value = '';
+      inputEl.disabled = true;
 
       try {
         const res = await fetch('https://swagger-bot.onrender.com/api-doc-bot', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ question })
         });
 
         const data = await res.json();
-        responseEl.innerText = data.answer || data.error || 'No response received';
+        const answer = data.answer || data.error || 'No response received';
+        addMessage(answer, 'bot');
       } catch (err) {
-        responseEl.innerText = 'Error: ' + err.message;
+        addMessage('Error: ' + err.message, 'bot');
+      } finally {
+        inputEl.disabled = false;
+        inputEl.focus();
       }
     }
+
+    function addMessage(text, type) {
+      const chatBox = document.getElementById('chatBox');
+      const msgEl = document.createElement('div');
+      msgEl.className = `message ${type}`;
+      msgEl.innerText = text;
+      chatBox.appendChild(msgEl);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    document.getElementById('questionInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') askQuestion();
+    });
   </script>
 </body>
 </html>
