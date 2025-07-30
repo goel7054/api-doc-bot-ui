@@ -116,7 +116,7 @@
       input.value = '';
 
       try {
-        const res = await fetch('https://swagger-bot.onrender.com/api-doc-bot', {
+        const res = await fetch('https://swagger-bot.onrender.com/search', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ question })
