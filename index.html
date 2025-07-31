@@ -7,33 +7,52 @@
     body {
       font-family: Arial, sans-serif;
       background: #f4f7f9;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       margin: 0;
       padding: 0;
+      height: 100vh;
     }
 
-    .logo {
-      margin-top: 20px;
+    /* Floating Chatbot Icon */
+    .chat-toggle {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background-color: #1976d2;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    .logo img {
-      height: 80px;
+    .chat-toggle img {
+      width: 30px;
+      height: 30px;
     }
 
+    /* Chat Window */
     .chat-container {
+      position: fixed;
+      bottom: 100px;
+      right: 25px;
       background: white;
-      width: 400px;
-      max-width: 90%;
+      width: 350px;
+      max-height: 500px;
       border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      margin-top: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      padding: 15px;
+      display: none;
+      flex-direction: column;
+      z-index: 9999;
     }
 
     .chat-box {
-      max-height: 300px;
+      flex: 1;
       overflow-y: auto;
       margin-bottom: 10px;
       display: flex;
@@ -71,7 +90,7 @@
       border: 1px solid #ccc;
     }
 
-    button {
+    button.send {
       padding: 10px 15px;
       background-color: #1976d2;
       color: white;
@@ -80,27 +99,34 @@
       cursor: pointer;
     }
 
-    button:hover {
+    button.send:hover {
       background-color: #1565c0;
     }
   </style>
 </head>
 <body>
 
-  <div class="logo">
-    <img src="Logo.jpg" alt="Bot Logo" />
-  </div>
+  <!-- Floating Chat Icon -->
+  <button class="chat-toggle" onclick="toggleChat()">
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/chat.png" alt="Chat" />
+  </button>
 
-  <div class="chat-container">
+  <!-- Chat Window -->
+  <div class="chat-container" id="chatContainer">
     <div class="chat-box" id="chatBox"></div>
     <div class="chat-input">
-      <input type="text" id="questionInput" placeholder="How can I help you" />
-      <button onclick="askQuestion()">Ask</button>
+      <input type="text" id="questionInput" placeholder="Ask me anything..." />
+      <button class="send" onclick="askQuestion()">Send</button>
     </div>
   </div>
 
   <script>
+    const chatContainer = document.getElementById('chatContainer');
     const chatBox = document.getElementById('chatBox');
+
+    function toggleChat() {
+      chatContainer.style.display = chatContainer.style.display === 'flex' ? 'none' : 'flex';
+    }
 
     function addMessage(text, sender) {
       const msg = document.createElement('div');
@@ -122,23 +148,22 @@
         const res = await fetch('https://swagger-bot.onrender.com/search', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: question }) // ✅ FIXED HERE
+          body: JSON.stringify({ query: question })
         });
 
         const data = await res.json();
 
         if (data.matches && data.matches.length > 0) {
-  const answer = data.matches.map((match, index) =>
-    `${index + 1}. [${match.method}] ${match.path}\n   → ${match.summary}`
-  ).join('\n\n');
+          const answer = data.matches.map((match, index) =>
+            `${index + 1}. [${match.method}] ${match.path}\n   → ${match.summary}`
+          ).join('\n\n');
 
-  addMessage(answer, 'bot');
-} else if (data.answer) {
-  addMessage(data.answer, 'bot');
-} else {
-  addMessage(data.message || data.error || 'No matches found.', 'bot');
-}
-
+          addMessage(answer, 'bot');
+        } else if (data.answer) {
+          addMessage(data.answer, 'bot');
+        } else {
+          addMessage(data.message || data.error || 'No matches found.', 'bot');
+        }
 
       } catch (err) {
         addMessage('Error: ' + err.message, 'bot');
