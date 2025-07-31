@@ -6,10 +6,12 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f7f9;
+      background: url('nedbank-background.png') no-repeat center top;
+      background-size: cover;
       margin: 0;
       padding: 0;
       height: 100vh;
+      position: relative;
     }
 
     /* Floating Chatbot Icon */
@@ -108,10 +110,10 @@
       background-color: #1565c0;
     }
 
-    /* Optional scrollbar styling */
     .chat-box::-webkit-scrollbar {
       width: 6px;
     }
+
     .chat-box::-webkit-scrollbar-thumb {
       background-color: #ccc;
       border-radius: 3px;
@@ -182,7 +184,6 @@
       }
     }
 
-    // Optional: Send message on Enter key
     inputField.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') askQuestion();
     });
