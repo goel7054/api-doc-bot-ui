@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Swagger Bot</title>
+  <title>Nedbank API Marketplace + Swagger Bot</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -57,6 +57,7 @@
       margin-bottom: 10px;
       display: flex;
       flex-direction: column;
+      max-height: 370px;
     }
 
     .message {
@@ -64,6 +65,8 @@
       border-radius: 8px;
       margin: 5px 0;
       max-width: 80%;
+      font-size: 14px;
+      line-height: 1.4;
     }
 
     .user {
@@ -88,6 +91,7 @@
       padding: 10px;
       border-radius: 5px;
       border: 1px solid #ccc;
+      font-size: 14px;
     }
 
     button.send {
@@ -97,21 +101,31 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      font-size: 14px;
     }
 
     button.send:hover {
       background-color: #1565c0;
     }
+
+    /* Optional scrollbar styling */
+    .chat-box::-webkit-scrollbar {
+      width: 6px;
+    }
+    .chat-box::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 3px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Floating Chat Icon -->
+  <!-- 🔘 Floating Chat Button -->
   <button class="chat-toggle" onclick="toggleChat()">
     <img src="https://img.icons8.com/ios-filled/50/ffffff/chat.png" alt="Chat" />
   </button>
 
-  <!-- Chat Window -->
+  <!-- 💬 Chat Window -->
   <div class="chat-container" id="chatContainer">
     <div class="chat-box" id="chatBox"></div>
     <div class="chat-input">
@@ -123,6 +137,7 @@
   <script>
     const chatContainer = document.getElementById('chatContainer');
     const chatBox = document.getElementById('chatBox');
+    const inputField = document.getElementById('questionInput');
 
     function toggleChat() {
       chatContainer.style.display = chatContainer.style.display === 'flex' ? 'none' : 'flex';
@@ -137,12 +152,11 @@
     }
 
     async function askQuestion() {
-      const input = document.getElementById('questionInput');
-      const question = input.value.trim();
+      const question = inputField.value.trim();
       if (!question) return;
 
       addMessage(question, 'user');
-      input.value = '';
+      inputField.value = '';
 
       try {
         const res = await fetch('https://swagger-bot.onrender.com/search', {
@@ -155,20 +169,23 @@
 
         if (data.matches && data.matches.length > 0) {
           const answer = data.matches.map((match, index) =>
-            `${index + 1}. [${match.method}] ${match.path}\n   → ${match.summary}`
+            `${index + 1}. [${match.method}] ${match.path}\n→ ${match.summary}`
           ).join('\n\n');
-
           addMessage(answer, 'bot');
         } else if (data.answer) {
           addMessage(data.answer, 'bot');
         } else {
           addMessage(data.message || data.error || 'No matches found.', 'bot');
         }
-
       } catch (err) {
         addMessage('Error: ' + err.message, 'bot');
       }
     }
+
+    // Optional: Send message on Enter key
+    inputField.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') askQuestion();
+    });
   </script>
 
 </body>
