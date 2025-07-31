@@ -19,7 +19,7 @@
       position: fixed;
       bottom: 25px;
       right: 25px;
-      background-color: #1976d2;
+      background-color: transparent;
       border: none;
       border-radius: 50%;
       width: 60px;
@@ -30,11 +30,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 0;
     }
 
     .chat-toggle img {
-      width: 36px;
-      height: 36px;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
     }
 
     /* Chat Window */
@@ -124,7 +127,7 @@
 
   <!-- 🔘 Floating Chat Button with Nedbank Logo -->
   <button class="chat-toggle" onclick="toggleChat()">
-    <!-- Replace 'nedbank-logo.png' with your actual logo file -->
+    <!-- Updated logo without blue background -->
     <img src="./Logo.jpg" alt="Nedbank Chat" />
   </button>
 
